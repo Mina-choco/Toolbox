@@ -1,0 +1,513 @@
+# Définition de la fonction Get-PasswordComplexity
+function Get-PasswordComplexity {
+    param (
+        [string]$Password
+    )
+
+    $MinimumLength = 15
+
+    if ($Password.Length -lt $MinimumLength) {
+        Write-Host "Password length is insufficient."
+    }
+
+    $SpecialChars = @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+')
+    $HasSpecialChars = $False
+    foreach ($Char in $SpecialChars) {
+        if ($Password.Contains($Char)) {
+            $HasSpecialChars = $True
+            break
+        }
+    }
+
+    $HasNumbers = $Password -match '[0-9]'
+    $HasUppercase = $Password -cMatch '[A-Z]'
+    $HasLowercase = $Password -cMatch '[a-z]'
+
+    $Complexity = 0
+    if ($HasSpecialChars) { $Complexity++ }
+    if ($HasNumbers) { $Complexity++ }
+    if ($HasUppercase) { $Complexity++ }
+    if ($HasLowercase) { $Complexity++ }
+
+    Write-Host "Password complexity: $Complexity out of 4"
+    if ($Complexity -lt 3) {
+        Write-Host "Advice: Choose a more secure password with a combination of special characters, numbers, and uppercase/lowercase letters."
+        Write-Host "Instead of remembering a complex password, a passphrase is longer than a password and easier to remember. It will significantly increase the robustness of your accesses."
+        Write-Host "An example: Your turtle's name is Georgette."
+    }
+
+    return $Complexity  # Retourne la complexité du mot de passe
+}
+
+# Définition de la fonction Get-LatestCVEsForActiveDirectory
+function Get-LatestCVEsForActiveDirectory {
+    $headers = @{
+        "time_start" = "01-01-2024"
+        "time_end" = "31-12-2024"
+        "time_type" = "Published"
+        "skip" = "0"  # Ignorer les CVEs précédents
+        "limit" = "10"  # Limiter à 10 CVEs
+    }
+    $apiUrl = "https://cve.circl.lu/api/query"
+    $apiResponse = Invoke-RestMethod -Uri $apiUrl -Headers $headers -Method Get
+
+    if ($apiResponse -eq $null) {
+        Write-Host "Aucune réponse de l'API."
+        return
+    }
+
+    $cveEntries = $apiResponse.results
+
+    if ($cveEntries.Count -eq 0) {
+        Write-Host "Aucun CVE trouvé pour l'Active Directory en 2024."
+        return
+    }
+
+    return $cveEntries
+}
+
+function Show-Menu {
+    Write-Host "================== Menu ======================"
+    Write-Host "1: Press '1' for Scanning."
+    Write-Host "2: Press '2' for dictionnary."
+    Write-Host "3: Press '3' for Complexity of Password."
+    Write-Host "4: Press '4' for Authentication."
+    Write-Host "5: Press '5' for Post-Exploitation."
+    Write-Host "6: Press '6' for the Report."
+    Write-Host "7: Press 'Q' to quit."
+}
+
+do {
+    Show-Menu
+    $Choice = Read-Host "Make your choice:"
+} until ($Choice -ge 1 -and $Choice -le 6 -or $Choice -eq 'Q' -or $Choice -eq 'q')
+
+switch ($Choice) {
+    1 {
+        Write-Host "You chose option 1 for Scanning."
+      
+        Write-Host "You chose Nmap."
+        $IPAddress = Read-Host "Enter the IP address to scan (ex: 192.168.1.1):"
+        $NmapOutput = & 'C:\Program Files (x86)\Nmap\nmap.exe' -A -p 22,21,23,443,80,53,135,3306,8080,8888 --traceroute $IPAddress
+
+        Write-Host $NmapOutput
+    }
+
+
+    2 {
+		
+        Write-Host "You chose option 2 for dictionnary."
+
+        # Chemin vers le fichier contenant le dictionnaire de mots de passe
+        $dictionnaire = "C:\Users\yasmi\OneDrive\Bureau\dictionnaire.txt"
+
+        # Liste des mots de passe à inclure dans le dictionnaire
+        $motsDePasse = @(
+            "123456789", "azerty", "1234561", "qwerty", "marseille", 
+            "000000", "1234567891", "doudou", "12345", "loulou", "123", 
+            "password", "azertyuiop", "12345678", "Azerty123", 
+            "Administrator", "Administrateur", "Admin123"
+        )
+
+        # Créer le fichier du dictionnaire et y écrire les mots de passe
+        $motsDePasse | Out-File -FilePath $dictionnaire
+
+        # Afficher un message pour indiquer que le dictionnaire a été créé
+        Write-Host "Le dictionnaire de mots de passe a été créé avec succès : $dictionnaire"
+
+        # Chemin vers le fichier contenant le dictionnaire de mots de passe
+        $dictionnaire = "C:\Users\yasmi\OneDrive\Bureau\dictionnaire.txt"
+
+        # Adresse IP de la cible
+        $cible = "192.168.177.147"
+
+        # Liste des utilisateurs à tester avec les mots de passe
+        $utilisateurs = @(
+            @{ Nom = "admin"; MotsDePasse = @("123456789", "azerty", "1234561", "qwerty", "marseille", "000000", "1234567891", "doudou", "12345", "loulou", "123", "password", "azertyuiop", "12345678", "Azerty123", "Administrator", "Administrateur", "Admin123") },
+            @{ Nom = "root"; MotsDePasse = @("123456789", "azerty", "1234561", "qwerty", "marseille", "000000", "1234567891", "doudou", "12345", "loulou", "123", "password", "azertyuiop", "12345678", "Azerty123", "Administrator", "Administrateur", "Admin123") },
+            @{ Nom = "user"; MotsDePasse = @("123456789", "azerty", "1234561", "qwerty", "marseille", "000000", "1234567891", "doudou", "12345", "loulou", "123", "password", "azertyuiop", "12345678", "Azerty123", "Administrator", "Administrateur", "Admin123") }
+        )
+
+        # Parcourir chaque utilisateur
+        foreach ($utilisateur in $utilisateurs) {
+            # Parcourir chaque mot de passe dans le dictionnaire
+            Get-Content $dictionnaire | ForEach-Object {
+                $motDePasse = $_
+                # Tenter de se connecter avec l'utilisateur et le mot de passe actuels
+                if (Test-NetConnection -ComputerName $cible -Port 3389 -InformationLevel Quiet) {
+                    # Si la connexion est réussie, afficher un message de succès et sortir de la boucle
+                    Write-Host "Connexion réussie avec l'utilisateur $($utilisateur.Nom) et le mot de passe $motDePasse" -ForegroundColor Green
+                    break
+                }
+                else {
+                    # Si la connexion échoue, afficher un message d'échec
+                    Write-Host "Échec de la connexion avec l'utilisateur $($utilisateur.Nom) et le mot de passe $motDePasse" -ForegroundColor Red
+                }
+            }
+        }
+    }
+    3 {
+        function Get-PasswordComplexity {
+            param (
+                [string]$Password
+            )
+
+            $MinimumLength = 15
+
+            if ($Password.Length -lt $MinimumLength) {
+                Write-Host "Password length is insufficient."
+            }
+
+            $SpecialChars = @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+')
+            $HasSpecialChars = $False
+            foreach ($Char in $SpecialChars) {
+                if ($Password.Contains($Char)) {
+                    $HasSpecialChars = $True
+                    break
+                }
+            }
+
+            $HasNumbers = $Password -match '[0-9]'
+            $HasUppercase = $Password -cMatch '[A-Z]'
+            $HasLowercase = $Password -cMatch '[a-z]'
+
+            $Complexity = 0
+            if ($HasSpecialChars) { $Complexity++ }
+            if ($HasNumbers) { $Complexity++ }
+            if ($HasUppercase) { $Complexity++ }
+            if ($HasLowercase) { $Complexity++ }
+
+            Write-Host "Password complexity: $Complexity out of 4"
+            if ($Complexity -lt 3) {
+                Write-Host "Advice: Choose a more secure password with a combination of special characters, numbers, and uppercase/lowercase letters."
+                Write-Host "Instead of remembering a complex password, a passphrase is longer than a password and easier to remember. It will significantly increase the robustness of your accesses."
+                Write-Host "An example: Your turtle's name is Georgette."
+            }
+
+            return $Complexity  # Retourne la complexité du mot de passe
+        }
+
+        # Demander à l'utilisateur d'entrer le mot de passe
+        $Password = Read-Host -Prompt "Enter the password to evaluate"
+        $PasswordComplexity = Get-PasswordComplexity -Password $Password  # Appel de la fonction et stockage du résultat dans une variable
+
+        # Stocker le mot de passe et sa complexité dans une variable
+        $PasswordReport = @{
+            Password = $Password
+            Complexity = $PasswordComplexity
+        }
+
+        # Afficher le rapport
+        Write-Host "Password Report:"
+        Write-Host "Password: $($PasswordReport.Password)"
+        Write-Host "Complexity: $($PasswordReport.Complexity) out of 4"
+    }
+    4 {
+        Write-Host "You chose option 4 for Authentication."
+        
+        # Spécifiez les informations d'identification de la machine cible
+
+        # Demander à l'utilisateur d'entrer le nom d'utilisateur
+        $Username = Read-Host "Enter the username"
+
+        # Demander à l'utilisateur d'entrer le mot de passe
+        $Password = Read-Host "Enter the password" -AsSecureString
+
+        # Demander à l'utilisateur d'entrer le nom d'hôte ou l'adresse IP de la machine cible
+        $hostname = Read-Host "Enter the hostname or IP address of the target machine"
+
+        # Convertir le mot de passe en une chaîne sécurisée
+        $SecurePassword = ConvertTo-SecureString $Password -AsPlainText -Force
+        $Credential = New-Object System.Management.Automation.PSCredential ($Username, $SecurePassword)
+
+        # Commande à exécuter à distance (exemple : obtenir le contenu du répertoire racine)
+        $Command = {
+            $Result = Get-ChildItem /
+            Write-Output $Result
+        }
+
+        # Exécution de la commande à distance
+        Invoke-Command -ComputerName $Hostname -Credential $Credential -ScriptBlock $Command
+    }
+    5 {
+        Write-Host "You chose option 5 for Post-Exploitation."
+
+        Write-Host "You chose CVE."
+               
+        function Get-LatestCVEsForActiveDirectory {
+            $headers = @{
+                "time_start" = "01-01-2024"
+                "time_end" = "31-12-2024"
+                "time_type" = "Published"
+                "skip" = "0"  # Ignorer les CVEs précédents
+                "limit" = "10"  # Limiter à 10 CVEs
+            }
+            $apiUrl = "https://cve.circl.lu/api/query"
+            $apiResponse = Invoke-RestMethod -Uri $apiUrl -Headers $headers -Method Get
+            
+            if ($apiResponse -eq $null) {
+                Write-Host "Aucune réponse de l'API."
+                return
+            }
+
+            $cveEntries = $apiResponse.results
+
+            if ($cveEntries.Count -eq 0) {
+                Write-Host "Aucun CVE trouvé pour l'Active Directory en 2024."
+                return
+            }
+
+            foreach ($entry in $cveEntries) {
+                $entryInfo = "ID: $($entry.id), Modifié: $($entry.Modified), Publié: $($entry.Published)"
+                $summaryInfo = "Sommaire: $($entry.summary)"
+
+                Write-Host "=== CVE Trouvés ==="
+                Write-Host $entryInfo
+                Write-Host $summaryInfo
+                Write-Host "====================`n"
+            }
+
+            # Spécification du chemin complet du fichier de sortie
+            $outputFilePath = "C:\Users\yasmi\OneDrive\Bureau\Resultats_CVE_AD_2024.txt"
+            $cveEntries | Select-Object id, Modified, Published, summary | ConvertTo-Json | Out-File -FilePath $outputFilePath -Encoding UTF8
+
+            Write-Host "Les 10 derniers résultats ont été enregistrés dans $outputFilePath."
+        }
+
+        # Appel de la fonction pour obtenir les 10 dernières CVEs de l'Active Directory en 2024
+        Get-LatestCVEsForActiveDirectory
+    }
+    6 {
+function Get-PasswordComplexity {
+    param (
+        [string]$Password
+    )
+
+    $MinimumLength = 15
+
+    if ($Password.Length -lt $MinimumLength) {
+        Write-Host "La longueur du mot de passe est insuffisante."
+    }
+
+    $SpecialChars = @('!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+')
+    $HasSpecialChars = $False
+    foreach ($Char in $SpecialChars) {
+        if ($Password.Contains($Char)) {
+            $HasSpecialChars = $True
+            break
+        }
+    }
+
+    $HasNumbers = $Password -match '[0-9]'
+    $HasUppercase = $Password -cMatch '[A-Z]'
+    $HasLowercase = $Password -cMatch '[a-z]'
+
+    $Complexity = 0
+    if ($HasSpecialChars) { $Complexity++ }
+    if ($HasNumbers) { $Complexity++ }
+    if ($HasUppercase) { $Complexity++ }
+    if ($HasLowercase) { $Complexity++ }
+
+    Write-Host "Complexité du Mot de Passe : $Complexity sur 4"
+    if ($Complexity -lt 3) {
+        Write-Host "Conseil : Choisissez un mot de passe plus sécurisé avec une combinaison de caractères spéciaux, de chiffres et de lettres majuscules/minuscules."
+        Write-Host "Au lieu de mémoriser un mot de passe complexe, une phrase de passe est plus longue qu'un mot de passe et plus facile à retenir. Cela augmentera significativement la robustesse de vos accès."
+        Write-Host "Exemple : Le nom de votre tortue est Georgette."
+    }
+
+    return $Complexity  # Retourne la complexité du mot de passe
+}
+
+# Demander le mot de passe à l'utilisateur
+$Password = Read-Host "Entrez votre mot de passe"
+
+# Évaluer la complexité du mot de passe
+$PasswordComplexity = Get-PasswordComplexity -Password $Password 
+
+# Appel des fonctions pour obtenir les résultats
+$IPAddress = Read-Host "Entrez l'adresse IP à analyser (ex: 192.168.1.1):"
+$NmapOutput = & 'C:\Program Files (x86)\Nmap\nmap.exe' -A -p 22,21,23,443,80,53,135,3306,8080,8888 --traceroute $IPAddress
+
+# Appel des fonctions pour obtenir les résultats des CVE
+$CveEntries = Get-LatestCVEsForActiveDirectory
+
+# Convertir les données en format JSON
+$jsonData = @"
+[
+    {
+        "Modified": "2024-05-09T09:15:00",
+        "Published": "2024-05-08T11:15:00",
+        "access": "",
+        "assigner": "cve-coordination@incibe.es",
+        "cvss": "",
+        "cwe": "CWE-269",
+        "id": "CVE-2024-3507",
+        "impact": "",
+        "last-modified": "2024-05-09T09:15:00",
+        "references": [],
+        "summary": "Improper privilege management vulnerability in Lunar software that affects versions 6.0.2 through 6.6.0. This vulnerability allows an attacker to perform a secondary process injection into the Lunar application and abuse those rights to access sensitive user information.",
+        "vulnerable_configuration": [],
+        "vulnerable_configuration_cpe_2_2": [],
+        "vulnerable_product": []
+    },
+    {
+        "Modified": "2024-05-09T09:15:00",
+        "Published": "2024-05-08T11:15:00",
+        "access": "",
+        "assigner": "cve-coordination@incibe.es",
+        "cvss": "",
+        "cwe": "CWE-270",
+        "id": "CVE-2024-3508",
+        "impact": "",
+        "last-modified": "2024-05-09T09:15:00",
+        "references": [],
+        "summary": "Another CVE summary goes here.",
+        "vulnerable_configuration": [],
+        "vulnerable_configuration_cpe_2_2": [],
+        "vulnerable_product": []
+    },
+    # Ajouter les huit autres CVE ici
+]
+"@
+
+# Convertir le JSON en objet PowerShell
+$cveEntries = ConvertFrom-Json $jsonData
+
+# Définir le contenu HTML avec les résultats
+$htmlContent = @"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report : Active Directory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+
+        ul {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        pre {
+            background-color: #f8f8f8;
+            padding: 10px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        .warning {
+            background-color: #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report : Active Directory</h1>
+    <h2>10 Latest CVE</h2>
+    <table>
+        <tr>
+            <th>CVE</th>
+            <th>Publication Date</th>
+            <th>Modification Date</th>
+            <th>Assigner</th>
+            <th>Explanation</th>
+        </tr>
+"@
+
+# Ajouter les dix CVE dans le contenu HTML
+foreach ($cve in $cveEntries) {
+    $htmlContent += @"
+        <tr>
+            <td>$($cve.id)</td>
+            <td>$($cve.Published)</td>
+            <td>$($cve.Modified)</td>
+            <td>$($cve.assigner)</td>
+            <td>$($cve.summary)</td>
+        </tr>
+"@
+}
+
+# Terminer le contenu HTML
+$htmlContent += @"
+    </table>
+
+    <h2>Strengh of Password</h2>
+    <p>Password : $Password</p>
+    <p>Strengh : $PasswordComplexity sur 4</p>
+"@
+
+if ($PasswordComplexity -lt 3) {
+    $htmlContent += @"
+    <div class='warning'>
+        <p>Advise : Choose a more secure password with a combination of special characters, numbers, and upper/lowercase letters.</p>
+        <p>Instead of memorizing a complex password, a passphrase is longer than a password and easier to remember. This will significantly increase the strength of your access.</p>
+        <p>Example: The name of your turtle is Georgette.</p>
+    </div>
+"@
+}
+
+$htmlContent += @"
+    <h2>Nmap Results</h2>
+    <p>Nmap scan results:</p>
+    <pre>$NmapOutput</pre>
+</body>
+</html>
+"@
+
+# Enregistrer le contenu HTML dans un fichier
+$htmlContent | Out-File -FilePath "C:\Users\yasmi\OneDrive\Bureau\Security_Report.html" -Encoding UTF8
+
+# Message de confirmation
+Write-Host "Report has been created successfully."
+
+
+}
+    7 {
+        Write-Host "Quitting the program."
+    }
+}
