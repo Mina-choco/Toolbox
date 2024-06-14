@@ -12,10 +12,10 @@ Ce projet contient deux scripts PowerShell :
 
 ### Installation
 
-[] Windows Server 2025
-[] Windows 11
-[] Outils non présent sur OS Windows (Nmap)
-[] Environnement de développement intégré
+- [x] Windows Server 2025
+- [x] Windows 11
+- [x] Outils non présent sur OS Windows (Nmap)
+- [x] Environnement de développement intégré
 
 ### Schéma d'architecture
 
