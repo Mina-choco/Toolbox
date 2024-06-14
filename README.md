@@ -63,7 +63,7 @@ Write-Host "7: Press 'Q' to quit."
 + Mode d’emploi : Génère un rapport des actions effectuées et des résultats obtenus.
 + Dépendances : Aucune
 
-***Exploitation (Toolbox.ps1)
+#### Exploitation (Toolbox.ps1)
 
 Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et génère toutes les informations importantes qu’un attaquant peut exploiter dans un environnement Active Directory (ordinateurs, utilisateurs, GPO, etc.).
 
