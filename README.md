@@ -1,5 +1,7 @@
 # Projet Toolbox
 
+L'objectif ultime de ce projet professionnel dans le domaine de la cybersécurité est de concevoir une boîte à outils automatisée dédiée à l'exécution de tests d'intrusion. Cette solution innovante, axée sur l'Active Directory, vise à renforcer la sécurité des systèmes informatiques et des réseaux de l'entreprise X. En fournissant une solution automatisée pour des tests d'intrusion de haute qualité, le projet aspire à consolider la réputation de l'entreprise, tout en optimisant la satisfaction des clients dans le domaine dynamique de la cybersécurité
+
 Ce projet contient deux scripts PowerShell :
 1. **Reconnaissance** (Tool2.ps1)
 2. **Exploitation** (Toolbox.ps1)
@@ -8,6 +10,7 @@ Ce projet contient deux scripts PowerShell :
 
 - [Installation](#installation)
 - [Utilisation](#utilisation)
+- [Schéma d'architecture](#schémad'architecture).
 - [Fonctionnalités](#fonctionnalités)
 
 ### Installation
