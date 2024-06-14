@@ -10,13 +10,16 @@ Ce projet contient deux scripts PowerShell :
 - [Utilisation](#utilisation)
 - [Fonctionnalités](#fonctionnalités)
 
+### Prérequis
+
+### Schéma d'architecture
 
 ![image](https://github.com/Mina-choco/Toolbox/assets/155466776/cc231e05-73fa-4d03-9537-ce119362808a)
 
 
 ### Fonctionnalités
 
-<u> Reconnaissance </u> (Tool2.ps1)
+#### Reconnaissance  (Tool2.ps1)
 
 Le script de reconnaissance offre les fonctionnalités suivantes :
 
