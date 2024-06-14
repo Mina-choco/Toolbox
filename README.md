@@ -20,6 +20,22 @@ Ce projet contient deux scripts PowerShell :
 - [x] Outils non présent sur OS Windows (Nmap)
 - [x] Environnement de développement intégré
 
+### Utilisation
+
+Voici la manière d’exécuter le script en cli :
+
++	Si le script est à la racine :
+```powershell
+.\Tool2.ps1
+.\Toolbox.ps1
+```
+
++	Si le script est dans un répertoire spécifique :
+```powershell
+cd "path"
+.\Tool2.ps1
+```
+
 ### Schéma d'architecture
 
 ![image](https://github.com/Mina-choco/Toolbox/assets/155466776/cc231e05-73fa-4d03-9537-ce119362808a)
