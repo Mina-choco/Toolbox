@@ -10,7 +10,9 @@ Ce projet contient deux scripts PowerShell :
 - [Utilisation](#utilisation)
 - [Fonctionnalités](#fonctionnalités)
 
-### Prérequis
+### Installation
+
+
 
 ### Schéma d'architecture
 
@@ -67,7 +69,7 @@ Write-Host "7: Press 'Q' to quit."
 
 Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et génère toutes les informations importantes qu’un attaquant peut exploiter dans un environnement Active Directory (ordinateurs, utilisateurs, GPO, etc.).
 
-**Dashboard Overview**
+1. **Dashboard Overview**
 
 - FSMO Role Holders: Identification des détenteurs de rôles FSMO.
 - AD Recycle Bin Status: État de la corbeille Active Directory.
@@ -77,25 +79,25 @@ Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et g
 - AD Objects Modified: Objets AD modifiés dans les "X" derniers jours.
 - User Activity: Utilisateurs inactifs, nouveaux comptes utilisateurs, logs de sécurité.
 
-**Groups Report**
+2. **Groups Report**
 
 - Group Details: Affiche tous les groupes et leurs membres.
 - Interactive Pie Charts: Graphiques circulaires dynamiques.
 
-**Organizational Units (OU) Report**
+3. **Organizational Units (OU) Report**
 
 - OU Details: Date de modification, protection contre la suppression accidentelle, GPO liés.
 - Pie Charts: Vue d’ensemble des OUs avec des liens GPO et protection contre la suppression accidentelle.
 
-**Users Report**
+4. **Users Report**
 
 - User Account Health: Nombre total d’utilisateurs, mots de passe expirant bientôt, comptes arrivant à expiration, utilisateurs inactifs, nouveaux comptes.
 - Active Directory Users Table: Détail des utilisateurs et leurs attributs principaux.
 
-**Group Policy Report**
+5. **Group Policy Report**
 
 - Group Policy Objects: État des objets de stratégie de groupe, date de modification, versions utilisateurs et ordinateurs.
 
-**Computers Report**
+6. **Computers Report**
 
 - Computer Objects Overview: Nombre total d’objets ordinateur, répartition des systèmes d’exploitation, statut de protection contre la suppression accidentelle, ordinateurs activés vs désactivés.
