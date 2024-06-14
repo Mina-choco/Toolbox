@@ -20,15 +20,16 @@ Ce projet contient deux scripts PowerShell :
 
 Le script de reconnaissance offre les fonctionnalités suivantes :
 
-
-'Write-Host "================== Menu ======================"
+'''
+Write-Host "================== Menu ======================"
 Write-Host "1: Press '1' for Scanning."
 Write-Host "2: Press '2' for dictionary."
 Write-Host "3: Press '3' for Complexity of Password."
 Write-Host "4: Press '4' for Authentication."
 Write-Host "5: Press '5' for Post-Exploitation."
 Write-Host "6: Press '6' for the Report."
-Write-Host "7: Press 'Q' to quit."'
+Write-Host "7: Press 'Q' to quit."
+'''
 
 1. **Scanning**
 
