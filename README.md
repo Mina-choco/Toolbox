@@ -32,7 +32,7 @@ Write-Host "7: Press 'Q' to quit."'
 
 1. ****Scanning**
 
-+Version : Nmap 7.95
++ Version : Nmap 7.95
 +Mode d’emploi : Scanne les ports d'un hôte pour identifier les services disponibles et évaluer la sécurité.
 +Dépendances : Nmap, WinPcap/Npcap
 
