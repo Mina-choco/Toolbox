@@ -16,7 +16,7 @@ Ce projet contient deux scripts PowerShell :
 
 ### Fonctionnalités
 
-<u>Reconnaissance</u> (Tool2.ps1)
+<u> Reconnaissance </u> (Tool2.ps1)
 
 Le script de reconnaissance offre les fonctionnalités suivantes :
 
