@@ -123,3 +123,8 @@ Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et g
 6. **Computers Report**
 
 - Computer Objects Overview: Nombre total d’objets ordinateur, répartition des systèmes d’exploitation, statut de protection contre la suppression accidentelle, ordinateurs activés vs désactivés.
+
+[Rapport Toolbox.zip](https://github.com/user-attachments/files/15855011/Rapport.Toolbox.zip)
+
+
+
