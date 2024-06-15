@@ -87,6 +87,10 @@ Write-Host "7: Press 'Q' to quit."
 + Mode d’emploi : Génère un rapport des actions effectuées et des résultats obtenus.
 + Dépendances : Aucune
 
+
+https://github.com/Mina-choco/Toolbox/assets/155466776/becb1692-85c6-455a-b77e-e2b7070a5f86
+
+
 #### Exploitation (Toolbox.ps1)
 
 Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et génère toutes les informations importantes qu’un attaquant peut exploiter dans un environnement Active Directory (ordinateurs, utilisateurs, GPO, etc.).
@@ -100,6 +104,10 @@ Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et g
 - Default OU Objects: Ordinateurs et utilisateurs dans les OU par défaut.
 - AD Objects Modified: Objets AD modifiés dans les "X" derniers jours.
 - User Activity: Utilisateurs inactifs, nouveaux comptes utilisateurs, logs de sécurité.
+
+
+https://github.com/Mina-choco/Toolbox/assets/155466776/f256c59e-90a3-4eea-b345-ee3f8ca89d53
+
 
 2. **Groups Report**
 
@@ -124,7 +132,9 @@ Le script d'exploitation effectue des requêtes LDAP sur l'Active Directory et g
 
 - Computer Objects Overview: Nombre total d’objets ordinateur, répartition des systèmes d’exploitation, statut de protection contre la suppression accidentelle, ordinateurs activés vs désactivés.
 
-[Rapport Toolbox.zip](https://github.com/user-attachments/files/15855011/Rapport.Toolbox.zip)
+
+https://github.com/Mina-choco/Toolbox/assets/155466776/48018083-b1d2-49f0-ad72-36f89eee2ba4
+
 
 
 
